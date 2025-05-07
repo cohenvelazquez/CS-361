@@ -25,12 +25,9 @@ Thumbs.db
 .vscode/
 .idea/
 
-# VSCode task configs
-**/.vscode/tasks.json
+# ignore VSCode task file
+.vscode/tasks.json
 
-# test executables & JSON
-**/assignment2/test.exe
-**/test.json
-
-# don’t ever commit user‐uploaded files
-server/uploads/
+# ignore old test binaries & JSONs
+assignment2/test.exe
+test.json
