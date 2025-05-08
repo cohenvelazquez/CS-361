@@ -23,11 +23,21 @@ export default function App() {
     setView('files')
   }
 
+  // called by UploadForm after 2 failed attempts
+  const handleHelpRequest = () => {
+    setView('help')
+  }
+
   // Pick which “page” to render in the <main> area
   const renderMain = () => {
     switch (view) {
       case 'upload':
-        return <UploadForm onSuccess={handleSuccess} />
+        return (
+          <UploadForm
+            onSuccess={handleSuccess}
+            onHelpRequest={handleHelpRequest}  // ← passes the help callback in
+          />
+        )
       case 'confirm':
         return (
           <Confirmation
@@ -49,8 +59,11 @@ export default function App() {
     <div className="min-h-screen flex flex-col bg-gray-100">
       {/* HEADER / NAV — always visible */}
       <header className="bg-white shadow">
-        <div className="max-w-5xl mx-auto px-8 py-6 flex justify-between items-center">
-          <h1 className="text-3xl font-bold">Smart File Organizer</h1>
+        <div className="max-w-5xl mx-auto px-8 py-6 flex flex-col md:flex-row justify-between items-center space-y-2 md:space-y-0">
+          <div className="text-center md:text-left">
+            <h1 className="text-3xl font-bold">Smart File Organizer</h1>
+            <p className="text-gray-800 mt-1 italic">Clean Folders. Clear Mind.</p>
+          </div>
           <nav className="space-x-4">
             <button
               onClick={() => setView('upload')}

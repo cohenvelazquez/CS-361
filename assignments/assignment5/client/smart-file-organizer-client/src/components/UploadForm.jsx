@@ -2,11 +2,12 @@ import React, { useState, useCallback } from 'react'
 import axios from 'axios'
 import { UploadCloud } from 'lucide-react'
 
-export default function UploadForm({ onSuccess }) {
-  const [file, setFile]       = useState(null)
-  const [error, setError]     = useState('')
-  const [hover, setHover]     = useState(false)
+export default function UploadForm({ onSuccess, onHelpRequest }) {
+  const [file, setFile]           = useState(null)
+  const [error, setError]         = useState('')
+  const [hover, setHover]         = useState(false)
   const [uploading, setUploading] = useState(false)
+  const [failCount, setFailCount] = useState(0)
 
   const handleDrop = useCallback(e => {
     e.preventDefault()
@@ -35,11 +36,28 @@ export default function UploadForm({ onSuccess }) {
       const { data } = await axios.post('/api/upload', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       })
+      setFailCount(0)           // reset on success
       onSuccess(data.metadata)
     } catch (err) {
-      setError(err.response?.data?.error || 'Upload failed')
-    } finally {
       setUploading(false)
+      const msg = err.response?.data?.error || 'Upload failed'
+      setError(msg)
+
+      // Increment fail count
+      const nextFail = failCount + 1
+      setFailCount(nextFail)
+
+      // After 2 fails, prompt for help
+      if (nextFail >= 2) {
+        const needsHelp = window.confirm(
+          'It looks like you’re having trouble uploading. Would you like to view the Help page?'
+        )
+        if (needsHelp) {
+          onHelpRequest()      // navigate to Help
+        } else {
+          setFailCount(0)      // reset and let them retry
+        }
+      }
     }
   }
 
@@ -59,7 +77,7 @@ export default function UploadForm({ onSuccess }) {
           {file ? file.name : 'Choose a file or drag & drop it here'}
         </h2>
         <p className="mt-2 text-sm text-gray-500">
-        PNG, JPG, TXT, MP3 & PDF, up to 5MB
+        PNG, JPG, TXT, MP3 & PDF formats, up to 5MB
         </p>
 
         <input
