@@ -107,7 +107,7 @@ export default function UploadForm({ onSuccess, onHelpRequest }) {
             : 'bg-blue-600 text-white hover:bg-blue-700'
         }`}
       >
-        {uploading ? 'Uploading…' : 'Upload'}
+        {uploading ? 'Uploading…' : 'Upload File'}
       </button>
     </form>
   )
